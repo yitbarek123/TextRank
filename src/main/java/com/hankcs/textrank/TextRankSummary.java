@@ -156,19 +156,14 @@ public class TextRankSummary
     static List<String> spiltSentence(String document)
     {
         List<String> sentences = new ArrayList<String>();
-        if (document == null) return sentences;
-        for (String line : document.split("[\r\n]"))
-        {
-            line = line.trim();
-            if (line.length() == 0) continue;
-            for (String sent : line.split("[，,。:：“”？?！!；;]"))
-            {
-                sent = sent.trim();
-                if (sent.length() == 0) continue;
-                sentences.add(sent);
-            }
+        Properties props = new Properties();
+        props.setProperty("annotators", "tokenize,ssplit");
+        StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+        CoreDocument doc = new CoreDocument(document);
+        pipeline.annotate(doc);
+        for (CoreSentence sent : doc.sentences()) {
+            sentences.add(sent.toString());
         }
-
         return sentences;
     }
 
